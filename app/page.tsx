@@ -227,21 +227,21 @@ function Home() {
                         </h2>
                         <div className="flex flex-col gap-2 w-full">
                           <a
-                            href={`https://www.amazon.com/s?k=${item.snippet.title}`}
+                            href={`https://www.amazon.com/s?k=${encodeURIComponent(item.snippet.title)}`}
                             target="_blank"
                             className="text-blue-500 hover:underline"
                           >
                             Search on Amazon
                           </a>
                           <a
-                            href={`https://www.ebay.com/sch/i.html?_nkw=${item.snippet.title}`}
+                            href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(item.snippet.title)}`}
                             target="_blank"
                             className="text-blue-500 hover:underline"
                           >
                             Search on eBay
                           </a>
                           <a
-                            href={`https://www.walmart.com/search/?query=${item.snippet.title}`}
+                            href={`https://www.walmart.com/search/?query=${encodeURIComponent(item.snippet.title)}`}
                             target="_blank"
                             className="text-blue-500 hover:underline"
                           >
