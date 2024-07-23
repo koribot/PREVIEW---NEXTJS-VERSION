@@ -271,7 +271,7 @@ function Home() {
                             fontWeight="bold"
                             fill="#666262"
                           >
-                            {searchLength > 0 ? "No Available Reviews" : ""}
+                            {searchLength > 0 ? "No Available Reviews" : "Search Now"}
                           </text>
                         </svg>
                         <div className="w-3/4 h-6 bg-gray-300 mb-2"></div>
