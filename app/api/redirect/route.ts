@@ -10,7 +10,7 @@ export async function GET(req:any) {
     return new NextResponse(null, {
       status: 302,
       headers: {
-        Location: `https://www.amazon.com/s?k=${productTitle}${tag}`
+        Location: `https://www.amazon.com/s?k=${encodeURIComponent(productTitle)}${tag}`
       }
     });
   } else {
@@ -19,7 +19,7 @@ export async function GET(req:any) {
       status: 302,
       headers: {
         'Content-Type': 'application/json',
-        Location: `https://www.amazon.com/s?k=${productTitle}${tag}`
+        Location: `https://www.amazon.com/s?k=${encodeURIComponent(productTitle)}${tag}`
       }
     });
   }
