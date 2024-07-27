@@ -30,9 +30,10 @@ jobs:
         run: yarn next build
         continue-on-error: true
       - name: Upload artifact
+        if: success() && steps.build.outcome == 'success'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./.next
 
   lint:
     runs-on: ubuntu-latest
