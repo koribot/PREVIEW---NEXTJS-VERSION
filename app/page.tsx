@@ -216,7 +216,9 @@ function Home() {
                           href={`https://www.youtube.com/watch?v=${item.id.videoId}`}
                           target="_blank"
                         >
-                          <img
+                          <Image
+                            width={48}
+                            height={48}
                             className="w-full h-48 object-contain mb-4"
                             src={item.snippet.thumbnails.high.url}
                             alt={item.snippet.title}

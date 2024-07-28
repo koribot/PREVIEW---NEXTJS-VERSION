@@ -65,6 +65,7 @@ export default function RootLayout({
         strategy="lazyOnload"
       />
       <Script
+        id="preview-amplitude"
         strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
