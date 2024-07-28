@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Preview - Product review",
-    description: "Get a list of product reviews on YouTube just by searching. Search it on Amazon, Walmart, and eBay in just 1 click.",
+    description:
+      "Get a list of product reviews on YouTube just by searching. Search it on Amazon, Walmart, and eBay in just 1 click.",
     site: "@yourwebsite",
     images: [
       {
@@ -37,11 +39,11 @@ export const metadata: Metadata = {
       },
     ],
   },
-  robots:{
+  robots: {
     index: true,
     follow: true,
-  } 
-}
+  },
+};
 
 export default function RootLayout({
   children,
@@ -50,8 +52,33 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
-      <Analytics />
+      <Script
+        src="https://cdn.amplitude.com/libs/analytics-browser-2.7.4-min.js.gz"
+        strategy="lazyOnload"
+      />
+      <Script
+        src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.6.8-min.js.gz"
+        strategy="lazyOnload"
+      />
+      <Script
+        src="https://cdn.amplitude.com/libs/plugin-autocapture-browser-0.9.0-min.js.gz"
+        strategy="lazyOnload"
+      />
+      <Script
+        strategy="lazyOnload"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1})).promise.then(function() {
+              window.amplitude.add(window.amplitudeAutocapturePlugin.plugin());
+              window.amplitude.init('bfd14c50871b8816479467dbb3350fa9');
+            });
+          `,
+        }}
+      />
+      <body className={inter.className}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
