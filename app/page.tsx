@@ -1,10 +1,11 @@
 "use client";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import Skeleton from "./components/Skeleton";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../public/logo.svg";
+import { useSearchParams , useRouter } from "next/navigation";
 interface SearchResultSnippet {
   publishedAt: string;
   channelId: string;
@@ -42,29 +43,43 @@ interface SearchResult {
   snippet: SearchResultSnippet;
 }
 
-
+function Search() {
+  const searchParams = useSearchParams()
+  return <input placeholder="Search..." />
+}
+ 
 function Home() {
   const spinRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter()
+  const params = useSearchParams()  
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
   const [searchLength, setSearchLength] = useState<number>(0)
-  const fetchData = async (event: React.FormEvent<HTMLFormElement>) => {
+  const fetchData = async (event?: React.FormEvent<HTMLFormElement>) => {
     setIsFetching(true);
-    event.preventDefault();
-    const Form = event.target as HTMLFormElement;
+    event?.preventDefault();
+    const Form = event?.target as HTMLFormElement;
     if (Form) {
       const Input = Form.elements.namedItem("search") as HTMLInputElement;
       const keywordValue = Input.value;
 
       if(keywordValue.length > 0){
-        const searchUrl = `/api/yt?kr=walid&keyword=${keywordValue}`;
-        const result = await axios.get(searchUrl);
-        // console.log(result.data.items);
+        const searchparams = `/api/yt?kr=walid&keyword=${keywordValue}`;
+        const result = await axios.get(searchparams);
         setSearchResult(result.data.items);
         setIsFetching(false);
         setSearchLength(keywordValue.length)
+        router.replace(`?s=${keywordValue}`)
       }
+    }else{
+      const p = params.get("s") || "";
+      const searchparams = `/api/yt?kr=walid&keyword=${p}`;
+      const result = await axios.get(searchparams);
+      setSearchResult(result.data.items);
+      setIsFetching(false);
+      if(p)setSearchLength(p.length)
     }
   };
 
@@ -98,6 +113,18 @@ function Home() {
     }
   }, []);
 
+  const searchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>)=>{
+    setSearchValue(e.target.value)
+  },[])
+
+  useLayoutEffect(()=>{
+    const p = params.get("s")
+    if(p){
+      setSearchValue(p)
+      fetchData()
+    }
+    
+  },[])
   return (
     <>
       {/* MAIN BACKGROUND WITH DOTS */}
@@ -198,7 +225,7 @@ function Home() {
           <div className="relative top-[130px] flex flex-col items-center w-full">
             <h1 className="text-[20px]">Search</h1>
             <form onSubmit={fetchData} className="w-full  bg-white">
-              <input required name="search" className="w-full p-5 rounded-md" />
+              <input onChange={searchChange} value={searchValue} required name="search" className="w-full p-5 rounded-md" />
             </form>
           </div>
         </div>
@@ -217,8 +244,8 @@ function Home() {
                           target="_blank"
                         >
                           <Image
-                            width={48}
-                            height={48}
+                            width={480}
+                            height={360}
                             className="w-full h-48 object-contain mb-4"
                             src={item.snippet.thumbnails.high.url}
                             alt={item.snippet.title}
@@ -273,7 +300,7 @@ function Home() {
                             fontWeight="bold"
                             fill="#666262"
                           >
-                            {searchLength > 0 ? "No Available Reviews" : "Search Now"}
+                            {searchLength > 0 ? "No Available Reviews" : searchValue!=="" ? "" : "Search Now"}
                           </text>
                         </svg>
                         <div className="w-3/4 h-6 bg-gray-300 mb-2"></div>
